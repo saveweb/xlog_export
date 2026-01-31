@@ -114,14 +114,15 @@ async function fetchSplitFiles(
 		if (!response.ok) break;
 
 		const contentLength = response.headers.get("Content-Length");
-		if (contentLength) {
+		const contentType = response.headers.get("Content-Type");
+		// If Content-Type is text/html, it means the part does not exist
+		if (contentType === "text/html") break;
+		if (contentLength) { // CloudFlare Pages may not return Content-Length
 			totalSize += parseInt(contentLength, 10);
+		} else {
+			totalSize += 2048576; // Assume 20MB if unknown
 		}
 		partIndex++;
-	}
-
-	if (totalSize === 0) {
-		throw new Error("No database parts found");
 	}
 
 	// Download all parts
