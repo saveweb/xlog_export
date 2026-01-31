@@ -1,3 +1,3 @@
 # Export Your Crossbell Data
 
-Yes. You own your data.
+You own your data?

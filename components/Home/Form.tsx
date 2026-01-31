@@ -4,24 +4,25 @@ import { useCallback, useEffect, useState } from "react";
 import { exportDataOfCharacter } from "../../utils/api/export";
 
 export default function Form({
-	handle: qHandle = "",
+	characterId: qCharacterId = "",
 	md: qMd,
 }: {
-	handle?: string;
+	characterId?: string;
 	md?: string;
 }) {
 	const qEnableMd = qMd ? qMd !== "false" && qMd !== "0" : false;
 
 	// values
-	const [handle, setHandle] = useState(qHandle);
+	const [characterId, setCharacterId] = useState(qCharacterId);
 	const [options, setOptions] = useState({
 		notesInMarkdown: qEnableMd ?? false,
+		skipAttachments: false,
 	});
 
 	useEffect(() => {
-		setHandle(qHandle);
+		setCharacterId(qCharacterId);
 		setOptions((v) => ({ ...v, notesInMarkdown: qEnableMd ?? false }));
-	}, [qHandle, qEnableMd]);
+	}, [qCharacterId, qEnableMd]);
 
 	// export
 	const [status, setStatus] = useState<
@@ -33,12 +34,13 @@ export default function Form({
 		try {
 			setStatus("loading");
 			setMessage("");
-			await exportDataOfCharacter(handle, {
+			await exportDataOfCharacter(characterId, {
 				onProgress: (progress, statusText) => {
 					setProgress(progress);
 					setMessage(statusText);
 				},
 				exportNotesInMarkdown: options.notesInMarkdown,
+				skipAttachments: options.skipAttachments,
 			});
 			setStatus("success");
 			setMessage("Success!");
@@ -46,11 +48,11 @@ export default function Form({
 			setStatus("error");
 			setMessage(e.message);
 		}
-	}, [handle, options.notesInMarkdown]);
+	}, [characterId, options.notesInMarkdown, options.skipAttachments]);
 
 	// input
-	const handleInputHandle = useCallback((e: any) => {
-		setHandle(e.target.value);
+	const handleInputCharacterId = useCallback((e: any) => {
+		setCharacterId(e.target.value);
 		setStatus("idle");
 		setMessage("");
 	}, []);
@@ -59,11 +61,10 @@ export default function Form({
 		<section className="form-control w-full max-w-xs">
 			<input
 				type="text"
-				placeholder="Type your handle here"
+				placeholder="Type your character ID here"
 				className="input input-bordered w-full max-w-xs"
-				maxLength={32}
-				value={handle}
-				onChange={handleInputHandle}
+				value={characterId}
+				onChange={handleInputCharacterId}
 				disabled={status === "loading"}
 			/>
 
@@ -71,7 +72,7 @@ export default function Form({
 
 			<label className="label cursor-pointer">
 				<span className="label-text text-xs">
-					Also export notes in markdown files
+					Also export notes & attachments in markdown files (开启才能导出附件，推荐开启。否则只有 JSON 元数据)
 				</span>
 				<input
 					type="checkbox"
@@ -89,16 +90,36 @@ export default function Form({
 
 			<div className="my-2"></div>
 
+			<label className="label cursor-pointer">
+				<span className="label-text text-xs">
+					Skip downloading attachments (仅保留附件 URL，不下载附件文件。如果附件错误太多导出卡住，开这个)
+				</span>
+				<input
+					type="checkbox"
+					className="toggle toggle-secondary"
+					checked={options.skipAttachments}
+					onChange={(e) =>
+						setOptions((v) => ({
+							...v,
+							skipAttachments: e.target.checked,
+						}))
+					}
+					disabled={status === "loading"}
+				/>
+			</label>
+
+			<div className="my-2"></div>
+
 			<button
 				className={clsx("btn btn-primary", {
-					"btn-disabled": !handle,
+					"btn-disabled": !characterId,
 					loading: status === "loading",
 				})}
 				onClick={handleExportData}
 			>
 				{status === "loading"
 					? `Export (${(progress * 100).toFixed(1)}%)`
-					: "Export"}
+					: "Export (需加载至少100MB数据，注意流量)"}
 			</button>
 
 			<div className="my-2"></div>

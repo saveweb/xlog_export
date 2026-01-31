@@ -4,16 +4,16 @@ export default function Footer() {
 			<nav className="flex flex-row justify-center space-x-5">
 				<a
 					className="link link-hover"
-					href="https://crossbell.io"
+					href="https://xlog.app"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					Crossbell.io
+					xLog.app(寄)
 				</a>
 
 				<a
 					className="link link-hover"
-					href="https://github.com/Crossbell-Box/export"
+					href="https://github.com/saveweb/xlog_export"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
@@ -22,11 +22,11 @@ export default function Footer() {
 
 				<a
 					className="link link-hover"
-					href="https://indexer.crossbell.io/docs"
+					href="https://saveweb.org"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					Indexer API
+					Save The Web Project
 				</a>
 			</nav>
 		</footer>

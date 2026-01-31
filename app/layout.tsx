@@ -1,8 +1,8 @@
 import "../styles/globals.css";
 
 export const metadata = {
-	title: "Export Crossbell Data",
-	description: "Export your crossbell data",
+	title: "Export xLog Data",
+	description: "Export your xLog data",
 	icons: {
 		icon: "/favicon.ico",
 	},
