@@ -104,26 +104,9 @@ async function fetchSplitFiles(
 	// Download all split parts
 	const parts: Uint8Array[] = [];
 	let partIndex = 0;
-	let totalSize = 0;
 	let downloadedSize = 0;
 
-	// First, get the size of all parts
-	while (true) {
-		const partUrl = `${baseUrl}${partIndex.toString().padStart(2, "0")}`;
-		const response = await fetch(partUrl, { method: "HEAD" });
-		if (!response.ok) break;
 
-		const contentLength = response.headers.get("Content-Length");
-		const contentType = response.headers.get("Content-Type");
-		// If Content-Type is text/html, it means the part does not exist
-		if (contentType === "text/html") break;
-		if (contentLength) { // CloudFlare Pages may not return Content-Length
-			totalSize += parseInt(contentLength, 10);
-		} else {
-			totalSize += 2048576; // Assume 20MB if unknown
-		}
-		partIndex++;
-	}
 
 	// Download all parts
 	partIndex = 0;
@@ -133,7 +116,6 @@ async function fetchSplitFiles(
 		if (!response.ok) break;
 
 		const contentLength = response.headers.get("Content-Length");
-		const partSize = contentLength ? parseInt(contentLength, 10) : 0;
 
 		const reader = response.body?.getReader();
 		if (!reader) {
@@ -151,7 +133,7 @@ async function fetchSplitFiles(
 			receivedLength += value.length;
 
 			if (onProgress) {
-				const progress = (downloadedSize + receivedLength) / totalSize;
+				const progress = receivedLength / (contentLength ? parseInt(contentLength, 10) : receivedLength);
 				onProgress(
 					progress * 0.5,
 					`Downloading part ${partIndex + 1}... (${Math.round(progress * 100)}%)`
@@ -173,7 +155,7 @@ async function fetchSplitFiles(
 	}
 
 	// Merge all parts
-	const totalBuffer = new Uint8Array(totalSize);
+	const totalBuffer = new Uint8Array(downloadedSize);
 	let position = 0;
 	for (const part of parts) {
 		totalBuffer.set(part, position);
