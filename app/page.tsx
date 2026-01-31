@@ -1,16 +1,12 @@
 import Footer from "@/components/Home/Footer";
 import Form from "@/components/Home/Form";
 
-export default function Page({
-	searchParams,
-}: {
-	searchParams: { characterId?: string; md?: string };
-}) {
+export default function Page() {
 	return (
 		<div className="min-h-screen flex flex-col justify-center items-center">
 			<main className="container mx-auto flex flex-col justify-center items-center">
 				<h1 className="text-3xl font-semibold">Export xLog Data</h1>
-				<p className="my-4">You own your data?</p>
+				<p className="my-4">You own your data.</p>
 
 				{/* Warning message */}
 				<div className="alert alert-warning w-full max-w-xs mb-4">
@@ -29,7 +25,7 @@ export default function Page({
 					</svg>
 					<span className="text-xs">
 						xLog 的 IPFS 目前没有在 pin 了，很多附件可能无法下载。
-						如果附件下载挂起时间过长，建议开“仅保留附件URL”选项。
+						如果附件下载挂起时间过长，建议开&ldquo;仅保留附件URL&rdquo;选项。
 						尽快导出附件吧，IPFS上还剩下的附件随时会消失更多。
 					</span>
 				</div>
@@ -43,7 +39,7 @@ export default function Page({
 					</span>
 				</div>
 
-				<Form characterId={searchParams.characterId} md={searchParams.md} />
+				<Form />
 			</main>
 
 			<Footer />

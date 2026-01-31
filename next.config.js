@@ -2,6 +2,7 @@
 const nextConfig = {
 	reactStrictMode: true,
 	swcMinify: true,
+	output: 'export',
 	webpack: (config, { isServer }) => {
 		// Exclude fs and other Node.js modules from client bundle
 		if (!isServer) {

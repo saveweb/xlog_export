@@ -1,14 +1,37 @@
 import { ipfsFetch, isIpfsUrl } from "@crossbell/ipfs-fetch";
-import initSqlJs, { Database } from "sql.js";
 import JSZip from "jszip";
 import yaml from "yaml";
+
+type Database = any;
 
 let db: Database | null = null;
 let dbLoadPromise: Promise<Database> | null = null;
 
+async function getSqlJsModule() {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const sqlJsModule = await import("sql.js");
+
+	// Handle both default and named exports
+	// sql.js exports: { default: initSqlJs, initSqlJs } in some versions
+	let initSqlJsFunc = (sqlJsModule as any).default?.initSqlJs || (sqlJsModule as any).initSqlJs;
+
+	// If still not found, the default export might be initSqlJs directly
+	if (!initSqlJsFunc && (sqlJsModule as any).default) {
+		initSqlJsFunc = (sqlJsModule as any).default;
+	}
+
+	if (typeof initSqlJsFunc !== 'function') {
+		throw new Error('Failed to load sql.js - initSqlJs is not a function');
+	}
+
+	const SQL = await initSqlJsFunc({
+		locateFile: (file: string) => `https://sql.js.org/dist/${file}`,
+	});
+	return SQL;
+}
+
 async function decompressGzip(
-	compressedData: Uint8Array,
-	onProgress?: (progress: number) => void
+	compressedData: Uint8Array
 ): Promise<Uint8Array> {
 	// Use native DecompressionStream API
 	const blob = new Blob([compressedData.buffer as ArrayBuffer]);
@@ -167,9 +190,7 @@ async function loadDatabase(
 
 	dbLoadPromise = (async () => {
 		onProgress?.(0, "Initializing SQL.js...");
-		const SQL = await initSqlJs({
-			locateFile: (file) => `https://sql.js.org/dist/${file}`,
-		});
+		const sqlModule = await getSqlJsModule();
 
 		onProgress?.(0, "Downloading database...");
 		const compressedArrayBuffer = await fetchWithProgress("/xlog.db.gz", onProgress);
@@ -181,7 +202,7 @@ async function loadDatabase(
 		const decompressedUint8Array = await decompressGzip(compressedUint8Array);
 
 		onProgress?.(0.9, "Loading database into memory...");
-		db = new SQL.Database(decompressedUint8Array);
+		db = new sqlModule.Database(decompressedUint8Array);
 		return db;
 	})();
 

@@ -1,28 +1,15 @@
 "use client";
 import clsx from "clsx";
 import { useCallback, useEffect, useState } from "react";
-import { exportDataOfCharacter } from "../../utils/api/export";
 
-export default function Form({
-	characterId: qCharacterId = "",
-	md: qMd,
-}: {
-	characterId?: string;
-	md?: string;
-}) {
-	const qEnableMd = qMd ? qMd !== "false" && qMd !== "0" : false;
-
+// Dynamic import to avoid SSR issues with sql.js
+export default function Form() {
 	// values
-	const [characterId, setCharacterId] = useState(qCharacterId);
+	const [characterId, setCharacterId] = useState("");
 	const [options, setOptions] = useState({
-		notesInMarkdown: qEnableMd ?? false,
+		notesInMarkdown: false,
 		skipAttachments: false,
 	});
-
-	useEffect(() => {
-		setCharacterId(qCharacterId);
-		setOptions((v) => ({ ...v, notesInMarkdown: qEnableMd ?? false }));
-	}, [qCharacterId, qEnableMd]);
 
 	// export
 	const [status, setStatus] = useState<
@@ -34,6 +21,10 @@ export default function Form({
 		try {
 			setStatus("loading");
 			setMessage("");
+
+			// Dynamic import for client-only execution
+			const { exportDataOfCharacter } = await import("../../utils/api/export");
+
 			await exportDataOfCharacter(characterId, {
 				onProgress: (progress, statusText) => {
 					setProgress(progress);
