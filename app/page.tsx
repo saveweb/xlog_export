@@ -30,6 +30,29 @@ export default function Page() {
 					</span>
 				</div>
 
+				{/* Warning message */}
+				<div className="alert alert-warning w-full max-w-xs mb-4">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						className="stroke-current shrink-0 h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+						/>
+					</svg>
+					<span className="text-xs">
+						2026-03-08更新：xlog 上面总计 38148 个 ipfs 链接（剔除了绝大部分 spam 内容后）。其中 34644 仍然可以获取到的 ipfs 我们已经存档了。
+						如果有博主往后需要图片存档，可以联系我们邮箱 saveweb _AT_ saveweb.org ，或者自行从 https://archive.org/details/XLOGIPFS-crawling 提取 warc。
+					</span>
+				</div>
+
+
+
 				<div className="alert alert-warning w-full max-w-xs mb-4">
 					<span className="text-xs">
 						<p>	要获取自己的 Character ID，请在
