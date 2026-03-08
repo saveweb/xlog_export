@@ -46,8 +46,9 @@ export default function Page() {
 						/>
 					</svg>
 					<span className="text-xs">
-						2026-03-08更新：xlog 上面总计 38148 个 ipfs 链接（剔除了绝大部分 spam 内容后）。其中 34644 仍然可以获取到的 ipfs 我们已经存档了。
+						2026-03-08第一次更新：xlog 上面总计 38148 个 ipfs 链接（剔除了绝大部分 spam 内容后）。其中 34644 仍然可以获取到的 ipfs 我们已经存档了。
 						如果有博主往后需要图片存档，可以联系我们邮箱 saveweb _AT_ saveweb.org ，或者自行从 https://archive.org/details/XLOGIPFS-crawling 提取 warc。
+						2026-03-08第二次更新：哎呀，发现我提取 ipfs 的正则写错了，忘了 ipfs cid 有大写形式。实际总量应该是 87396 个 ipfs。多出来的这些看起来基本没救了。寄！
 					</span>
 				</div>
 
